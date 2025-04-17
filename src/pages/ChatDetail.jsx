@@ -36,7 +36,7 @@ const ChatDetail = () => {
 		if (id) {
 			const chatText = await Gemini(inputChat, messageDetail);
 			if (dataDetail.title === "chat" || !dataDetail.title) {
-				const promptName = `This is a new chat, and user ask about ${inputChat}. No rely and comment just give me a name for this chat, Max length is 10 characters`;
+				const promptName = `Đây là đoạn chat mới, người dùng hỏi về ${inputChat}. Không trả lời, bạn hãy đưa ra tiêu đề chon đoạn chat, chiều dài tối đa 10 ký tự`;
 				const newTitle = await Gemini(promptName);
 				dispatch(setNameChat({ newTitle, chatId: id }));
 			}

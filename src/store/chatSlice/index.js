@@ -24,7 +24,7 @@ const initData = {
 */
 
 const ChatSlice = createSlice({
-	name: "chat",
+	name: "chat",		// name dùng để tạo type mặc định cho action({ type: "chat/addChat", payload })
 	initialState: initData,
 	reducers: {
 		addChat: (state, action) => {
@@ -45,8 +45,8 @@ const ChatSlice = createSlice({
 			const { idChat, userMess, botMess } = action.payload;
 			const chat = state.data.find((chat) => chat.id === idChat);
 			if (chat) {
-				const messageFormat = marked.parse(botMess);
-				const safeChat = DOMPurify.sanitize(messageFormat);
+				const messageFormat = marked.parse(botMess);		// chuyển text thành html
+				const safeChat = DOMPurify.sanitize(messageFormat);	// lọc html
 				const newMessage = [
 					...chat.messages,
 					{
