@@ -9,7 +9,6 @@ import { Link, useNavigate } from "react-router-dom";
 const Sidebar = ({ onToggle }) => {
 	const dispatch = useDispatch();
 	const nav = useNavigate();
-
 	const { data } = useSelector((state) => state.chat);
 
 	const handleNewChat = () => {

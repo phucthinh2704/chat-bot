@@ -27,12 +27,19 @@ const ChatSlice = createSlice({
 	name: "chat",
 	initialState: initData,
 	reducers: {
-		addChat: (state) => {
-			state.data.push({
-				id: v4(),
-				title: "chat",
-				messages: [],
-			});
+		addChat: (state, action) => {
+			if (!action.payload)
+				state.data.push({
+					id: v4(),
+					title: "chat",
+					messages: [],
+				});
+			else
+				state.data.push({
+					id: action.payload,
+					title: "chat",
+					messages: [],
+				});
 		},
 		addMessage: (state, action) => {
 			const { idChat, userMess, botMess } = action.payload;
@@ -71,6 +78,7 @@ const ChatSlice = createSlice({
 	},
 });
 
-export const { addChat, removeChat, addMessage, setNameChat } = ChatSlice.actions;
+export const { addChat, removeChat, addMessage, setNameChat } =
+	ChatSlice.actions;
 
 export default ChatSlice.reducer;

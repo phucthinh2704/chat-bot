@@ -53,7 +53,6 @@ async function run(textInput, chatHistory) {
 	});
 
 	const result = await chatSession.sendMessage(textInput);
-   console.log(result.response.text());
 	return result.response.text();
 }
 
