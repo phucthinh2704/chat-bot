@@ -6,7 +6,7 @@ import { v4 } from "uuid";
 import DOMPurify from "dompurify";
 
 const initData = {
-	data: [],
+	data: JSON.parse(localStorage.getItem("chat")) || [],
 };
 
 /**
@@ -24,7 +24,7 @@ const initData = {
 */
 
 const ChatSlice = createSlice({
-	name: "chat",		// name dùng để tạo type mặc định cho action({ type: "chat/addChat", payload })
+	name: "chat", // name dùng để tạo type mặc định cho action({ type: "chat/addChat", payload })
 	initialState: initData,
 	reducers: {
 		addChat: (state, action) => {
@@ -40,13 +40,14 @@ const ChatSlice = createSlice({
 					title: "chat",
 					messages: [],
 				});
+			localStorage.setItem("chat", JSON.stringify(state.data));
 		},
 		addMessage: (state, action) => {
 			const { idChat, userMess, botMess } = action.payload;
 			const chat = state.data.find((chat) => chat.id === idChat);
 			if (chat) {
-				const messageFormat = marked.parse(botMess);		// chuyển text thành html
-				const safeChat = DOMPurify.sanitize(messageFormat);	// lọc html
+				const messageFormat = marked.parse(botMess); // chuyển text thành html
+				const safeChat = DOMPurify.sanitize(messageFormat); // lọc html
 				const newMessage = [
 					...chat.messages,
 					{
@@ -62,11 +63,13 @@ const ChatSlice = createSlice({
 				];
 				chat.messages = newMessage;
 			}
+			localStorage.setItem("chat", JSON.stringify(state.data));
 		},
 		removeChat: (state, action) => {
 			state.data = state.data.filter(
 				(chat) => chat.id !== action.payload
 			);
+			localStorage.setItem("chat", JSON.stringify(state.data));
 		},
 		setNameChat: (state, action) => {
 			const { newTitle, chatId } = action.payload;
@@ -74,6 +77,7 @@ const ChatSlice = createSlice({
 			if (chat) {
 				chat.title = newTitle;
 			}
+			localStorage.setItem("chat", JSON.stringify(state.data));
 		},
 	},
 });

@@ -33,6 +33,7 @@ const ChatDetail = () => {
 
 	const handleChatDetail = async () => {
 		setIsLoading(true);
+		setInputChat("");
 		if (id) {
 			const chatText = await Gemini(inputChat, messageDetail);
 			if (dataDetail.title === "chat" || !dataDetail.title) {
@@ -47,7 +48,6 @@ const ChatDetail = () => {
 					botMess: chatText,
 				};
 				dispatch(addMessage(dataMessage));
-				setInputChat("");
 				setIsLoading(false);
 			}
 		} else {
@@ -67,7 +67,6 @@ const ChatDetail = () => {
 					botMess: chatText,
 				};
 				dispatch(addMessage(dataMessage));
-				setInputChat("");
 				setIsLoading(false);
 			}
 		}
@@ -170,6 +169,11 @@ const ChatDetail = () => {
 						className="px-4 py-2 rounded-lg w-[90%] border"
 						value={inputChat}
 						onChange={(e) => setInputChat(e.target.value)}
+						onKeyDown={(e) => {
+							if (e.key === "Enter") {
+								handleChatDetail();
+							}
+						}}
 					/>
 					{isLoading && (
 						<Spin
