@@ -46,22 +46,29 @@ const ChatSlice = createSlice({
 			const { idChat, userMess, botMess } = action.payload;
 			const chat = state.data.find((chat) => chat.id === idChat);
 			if (chat) {
-				const messageFormat = marked.parse(botMess); // chuyển text thành html
-				const safeChat = DOMPurify.sanitize(messageFormat); // lọc html
-				const newMessage = [
-					...chat.messages,
-					{
-						id: v4(),
-						text: userMess,
-						isBot: false,
-					},
-					{
-						id: v4(),
-						text: safeChat,
-						isBot: true,
-					},
-				];
-				chat.messages = newMessage;
+				if (!botMess) {	// chỉ thêm message của người dùng
+					const newMessage = [
+						...chat.messages,
+						{
+							id: v4(),
+							text: userMess,
+							isBot: false,
+						},
+					];
+					chat.messages = newMessage;
+				} else {	// thêm message của bot
+					const messageFormat = marked.parse(botMess); // chuyển text thành html
+					const safeChat = DOMPurify.sanitize(messageFormat); // lọc html
+					const newMessage = [
+						...chat.messages,
+						{
+							id: v4(),
+							text: safeChat,
+							isBot: true,
+						},
+					];
+					chat.messages = newMessage;
+				}
 			}
 			localStorage.setItem("chat", JSON.stringify(state.data));
 		},

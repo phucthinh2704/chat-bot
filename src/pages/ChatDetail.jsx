@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Spin } from "antd";
@@ -15,7 +15,10 @@ const ChatDetail = () => {
 	const [dataDetail, setDataDetail] = useState([]);
 	const [messageDetail, setMessageDetail] = useState([]);
 	const [inputChat, setInputChat] = useState("");
+	const [isTyping, setIsTyping] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
+	const messagesEndRef = useRef(null);
+
 	const { id } = useParams();
 	const nav = useNavigate();
 	const { data } = useSelector((state) => state.chat);
@@ -31,9 +34,23 @@ const ChatDetail = () => {
 		}
 	}, [data, id]);
 
+	useEffect(() => {
+		scrollToBottom();
+	}, [messageDetail, isTyping]);
+
+	const scrollToBottom = () => {
+		messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+	};
+
 	const handleChatDetail = async () => {
 		setIsLoading(true);
+		setIsTyping(true);
 		setInputChat("");
+		dispatch(addMessage({
+			idChat: id,
+			userMess: inputChat,
+			botMess: null,
+		}));
 		if (id) {
 			const chatText = await Gemini(inputChat, messageDetail);
 			if (dataDetail.title === "chat" || !dataDetail.title) {
@@ -49,6 +66,7 @@ const ChatDetail = () => {
 				};
 				dispatch(addMessage(dataMessage));
 				setIsLoading(false);
+				setIsTyping(false);
 			}
 		} else {
 			const id = v4();
@@ -68,6 +86,7 @@ const ChatDetail = () => {
 				};
 				dispatch(addMessage(dataMessage));
 				setIsLoading(false);
+				setIsTyping(false);
 			}
 		}
 	};
@@ -86,7 +105,11 @@ const ChatDetail = () => {
 				<h1 className="text-3xl w-full font-bold uppercase p-2">
 					Gemini
 				</h1>
-				<h2><a href="mailto: thinhphuc2704@gmail.com">Liên hệ: thinhphuc2704@gmail.com</a></h2>
+				<h2>
+					<a href="mailto: thinhphuc2704@gmail.com">
+						Liên hệ: thinhphuc2704@gmail.com
+					</a>
+				</h2>
 			</div>
 			{menuToggle && (
 				<div className="absolute h-full top-0 left-0 xl:hidden">
@@ -130,6 +153,30 @@ const ChatDetail = () => {
 									</div>
 								</div>
 							))}
+
+						{/* Typing indicator */}
+						{isTyping && (
+							<div className="flex mr-auto ml-13 mb-4 p-3 bg-gray-100 rounded-lg rounded-bl-sm">
+								<div className="flex space-x-1">
+									<div
+										className="w-2 h-2 rounded-full bg-gray-500 animate-bounce"
+										style={{
+											animationDelay: "0.1s",
+										}}></div>
+									<div
+										className="w-2 h-2 rounded-full bg-gray-500 animate-bounce"
+										style={{
+											animationDelay: "0.2s",
+										}}></div>
+									<div
+										className="w-2 h-2 rounded-full bg-gray-500 animate-bounce"
+										style={{
+											animationDelay: "0.3s",
+										}}></div>
+								</div>
+							</div>
+						)}
+						<div ref={messagesEndRef} />
 					</div>
 				) : (
 					<div className="flex flex-col space-y-6">
